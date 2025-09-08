@@ -22,7 +22,10 @@ namespace CsOpdrachten
         {
             get 
             {
-                Node? current = _head!;
+                if (_head is null)
+                    throw new NullReferenceException("Add something first idk");
+
+                Node current = _head;
                 for (int i = 0; i < index; i++)
                 {
                     current = current.Next!;
@@ -31,7 +34,10 @@ namespace CsOpdrachten
             }
             set 
             {
-                Node current = _head!;
+                if (_head is null)
+                    throw new NullReferenceException("Add something first idk");
+
+                Node current = _head;
                 for (int i = 0; i < index; i++)
                 {
                     current = current.Next!;
@@ -40,8 +46,13 @@ namespace CsOpdrachten
             }
         }
 
-        public void Clear() => //O(1)
-            throw new NotImplementedException();
+        public void Clear()
+        {
+            //not pointing to any nodes... so... it's empty right?
+            _head = null;
+            _tail = null;
+            _count = 0;
+        }
 
         public void Add(T element) //O(1)
         {
@@ -52,7 +63,7 @@ namespace CsOpdrachten
                 Value = element
             };
 
-            if (_head == null && _tail == null)  //_head stays at the first node added
+            if (_head is null && _tail is null)  //_head stays at the first node added
             {
                 _head = newNode;     //head and tail both point to element
                 _tail = newNode;
@@ -60,10 +71,10 @@ namespace CsOpdrachten
             }
             else
             {
-                _tail.Next = newNode; //points to the new element, kinda creates it ig
-                _tail = newNode;      //sets _tail to new element which is now last in list
+                _tail!.Next = newNode; //the (old) _tail.Next points to the newNode with the element
+                _tail = newNode;      //changeing tail does not change the .Next of the old _tail
             }
-                _count++;
+            _count++; //for quick returning of the length 
         }
             
 
@@ -79,28 +90,31 @@ namespace CsOpdrachten
 
         public void Remove(T element)
         {
-            Node? current = _head!;
+            if (_head is null)
+                throw new InvalidOperationException("List is empty!");
+
+            Node? current = _head; //'current' copied the reference of the Node _head is pointing to, so now it's also pointing at that
             Node? previous = null;
 
-            if (current == null) throw new NullReferenceException();
-
-            for (int i = 0; i < _count; i++)
-            {
-                previous = current;
-                if (EqualityComparer<T>.Default.Equals(current!.Value, element))
+            while(current is not null)
+            { 
+                if (EqualityComparer<T>.Default.Equals(current.Value, element)) //compares the current to T element
                 {
-                    if (current == _head)
+                    if (previous is null)   //checks if current is the first item the list
                     {
-                        current = current.Next;
+                        _head = current.Next;  //_head points to the same reference as current.Next 
                         _count--;
                         return;
                     }
-
-                    previous!.Next = current.Next; //precious.Next (oftewel current) wordt niet meer naar gewezen.. ->removed
-                    _count--;
-                    return;
+                    else
+                    {
+                        previous.Next = current.Next; //previous.Next points to the Node current.Next is pointing to, skipping over current
+                        _count--;
+                        return; 
+                    }
                 }
-                current = current.Next;
+                previous = current; //  e.g. current is 3, previous copied the reference of current, and also points at the same 3
+                current = current.Next; //current points to current.Next, lets say 4 idk. so current = 3, next = 4
             }
         }
 
