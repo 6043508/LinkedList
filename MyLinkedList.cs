@@ -9,6 +9,7 @@ namespace CsOpdrachten
     public class MyLinkedList<T> : IMyList<T>
     {
         private List<T> _list = [];
+        private Node _head;
 
         public T this[int index]   //O(n)
         { 
@@ -19,8 +20,15 @@ namespace CsOpdrachten
         public void Clear() => //O(1)
             _list.Clear(); 
 
-        public void Add(T element) => //O(n)
-            _list.Add(element); 
+        public void Add(T element)
+        {
+            Node toAdd = new();
+            toAdd.Data = element;
+            Node current = _head;
+            current.Next = toAdd;
+
+        }
+            
 
         public int IndexOf(T element) => //O(n)
             _list.IndexOf(element); 
