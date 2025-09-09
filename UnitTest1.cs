@@ -165,16 +165,16 @@ namespace CsOpdrachten
         }
 
         [Test]
-        public void Insert_should_throw_error_if_argument_goes_out_of_range()
+        public void Insert_should_throw_InvalidOperationException_if_argument_goes_out_of_range()
         {
             list.Add(1);
             list.Add(3);
 
             Action act = () => list.Insert(-1, 3);
-            act.Should().Throw<NullReferenceException>();
+            act.Should().Throw<InvalidOperationException>();
 
             act = () => list.Insert(4, 3);
-            act.Should().Throw<NullReferenceException>();
+            act.Should().Throw<InvalidOperationException>();
         }
 
         [Test]
@@ -192,12 +192,13 @@ namespace CsOpdrachten
         }
 
         [Test]
-        public void Contains_should_throw_nullreference_if_list_is_empty()
+        public void Contains_should_throw_InvalidOperation_if_list_is_empty()
         {
             Action act = () => list.Contains(1);
-            act.Should().Throw<NullReferenceException>();
+            act.Should().Throw<InvalidOperationException>();
         }
 
+        [Test]
         public void IndexOf_should_return_the_index_of_element_in_list()
         {
             list.Add(1);
@@ -205,13 +206,25 @@ namespace CsOpdrachten
             list.Add(4);
 
             list.IndexOf(1).Should().Be(0);
-            list.IndexOf(4).Should().Be(4);
+            list.IndexOf(4).Should().Be(2);
             list.IndexOf(3).Should().Be(1);
         }
 
+        [Test]
         public void IndexOf_should_return_minus_one_if_the_element_is_not_in_list()
         {
+            list.Add(1);
             list.IndexOf(2).Should().Be(-1);
+        }
+
+        [Test]
+        public void Trying_to_acces_or_set_an_element_from_an_empty_list_should_throw_InvalidOperationExceptione()
+        {
+            Action act = () => { var _ = list[0]; };
+            act.Should().Throw<InvalidOperationException>();
+
+            act = () => list[0] = 3;
+            act.Should().Throw<InvalidOperationException>();
         }
     }
 }

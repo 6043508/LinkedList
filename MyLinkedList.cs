@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿// 1.
 // 2. Array, List
 // 3. Zodat je elementen kan opzoeken
 // 4. je kan elk type lijst maken die je maar wilt
@@ -18,16 +13,17 @@ namespace CsOpdrachten
             public required T Value;
         }
 
+        //list starts empty
         private Node? _head = null;
         private Node? _tail = null;
-        private int _count = 0;
+        private int _count = 0; //for quick returning of the length of list
 
         public T this[int index]   //O(n)
         {
             get 
             {
                 if (_head is null)
-                    throw new NullReferenceException("Add something first idk");
+                    throw new InvalidOperationException("List is empty");
 
                 Node current = _head;
                 for (int i = 0; i < index; i++)
@@ -38,7 +34,7 @@ namespace CsOpdrachten
             set 
             {
                 if (_head is null)
-                    throw new NullReferenceException("Add something first idk");
+                    throw new InvalidOperationException("List is empty");
 
                 Node current = _head;
                 for (int i = 0; i < index; i++)
@@ -50,7 +46,7 @@ namespace CsOpdrachten
 
         public void Clear()  //O(1)
         {
-            //not pointing to any nodes... so... it's empty right?
+            //resetting to start
             _head = null;
             _tail = null;
             _count = 0;
@@ -58,14 +54,13 @@ namespace CsOpdrachten
 
         public void Add(T element) //O(1)
         {
-
             //maakt de nieuwe node aan
             Node newNode = new()
             {
                 Value = element
             };
 
-            if (_head is null && _tail is null)  //_head stays at the first node added
+            if (_head is null && _tail is null)  //if head was empty before, _head stays at the first node added
             {
                 _head = newNode;     //head and tail both point to element
                 _tail = newNode;
@@ -76,13 +71,13 @@ namespace CsOpdrachten
                 _tail!.Next = newNode; //the (old) _tail.Next points to the newNode with the element
                 _tail = newNode;      //changeing tail does not change the .Next of the old _tail
             }
-            _count++; //for quick returning of the length of list
+            _count++; 
         }
             
         public int IndexOf(T element) //O(n)
         {
             if (_head is null)
-                throw new NullReferenceException("List is empty");
+                throw new InvalidOperationException("List is empty");
 
             Node? current = _head;
 
@@ -100,7 +95,7 @@ namespace CsOpdrachten
         public bool Contains(T element) //O(n)
         {
             if (_head is null)
-                throw new NullReferenceException("List is empty");
+                throw new InvalidOperationException("List is empty");
 
             Node? current = _head;
             //loop through, return if found
@@ -117,35 +112,37 @@ namespace CsOpdrachten
         public void Insert(int index, T element) //O(n)
         {
             if (_head is null)
-                throw new NullReferenceException("List is empty");
+                throw new InvalidOperationException("List is empty");
 
             if (index < 0 || index > _count)
-                throw new NullReferenceException("Index out of range");
+                throw new InvalidOperationException("Index out of range");
 
             Node? current = _head;
             Node? previous = null;
 
+            //node with the value we're inserting
             Node newNode = new()
             {
                 Value = element
             };
 
-            //front
+            //if inserting at the first element 
             if (index == 0)
             {
                 newNode.Next = current;
                 _head = newNode;
+                _count++;
+                return;
             }
-            else
+            //everywhere else
+            for (int i = 0; i < index; i++)
             {
-                for (int i = 0; i < index; i++)
-                {
-                    previous = current;
-                    current = current!.Next;
-                }
-                previous!.Next = newNode;
-                newNode.Next = current;
+                previous = current;
+                current = current!.Next;
             }
+            previous!.Next = newNode;
+            newNode.Next = current;
+            
             _count++;
         }
 
@@ -154,7 +151,7 @@ namespace CsOpdrachten
             if (_head is null)
                 throw new InvalidOperationException("List is empty!");
 
-            Node? current = _head; //'current' copied the reference of the Node _head is pointing to, so now it's also pointing at that
+            Node? current = _head; //'current' now points to the same node as _head does <- that how reference types work
             Node? previous = null;
 
             while(current is not null)
@@ -174,15 +171,15 @@ namespace CsOpdrachten
                         return; 
                     }
                 }
-                previous = current; //  e.g. current is 3, previous copied the reference of current, and also points at the same 3
-                current = current.Next; //current points to current.Next, lets say 4 idk. so current = 3, next = 4
+                previous = current;  
+                current = current.Next; 
             }
         }
 
         public void RemoveAt(int index) //O(n)
         {
             if (_head is null)
-                throw new NullReferenceException("List is empty");
+                throw new InvalidOperationException("List is empty");
 
             Node? current = _head;
             Node? previous = null;
