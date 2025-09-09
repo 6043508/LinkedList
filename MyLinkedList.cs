@@ -114,7 +114,7 @@ namespace CsOpdrachten
             if (_head is null)
                 throw new InvalidOperationException("List is empty");
 
-            if (index < 0 || index > _count)
+            if (index < 0 || index >= _count)
                 throw new InvalidOperationException("Index out of range");
 
             Node? current = _head;
@@ -203,7 +203,6 @@ namespace CsOpdrachten
 
         public int Count() => //O(1)
             _count;
-
     }
 }
 

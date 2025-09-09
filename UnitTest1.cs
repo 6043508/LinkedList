@@ -108,6 +108,20 @@ namespace CsOpdrachten
         }
 
         [Test]
+        public void RemoveAt_should_throw_an_exception_if_list_is_null()
+        {
+            Action act = () => list.RemoveAt(3);
+            act.Should().Throw<InvalidOperationException>();
+        }
+
+        [Test]
+        public void Remove_should_throw_an_exception_if_list_is_null()
+        {
+            Action act = () => list.Remove(3);
+            act.Should().Throw<InvalidOperationException>();
+        }
+
+        [Test]
         public void Removing_the_last_element_should_not_cause_problems_either()
         {
             list.Add(1);
@@ -178,6 +192,13 @@ namespace CsOpdrachten
         }
 
         [Test]
+        public void Insert_should_throw_an_invalidOperationException_if_list_is_null()
+        {
+            Action act = () => list.Insert(3, 3);
+            act.Should().Throw<InvalidOperationException>();
+        }
+
+        [Test]
         public void Contains_should_return_true_if_element_is_in_list()
         {
             list.Add(1);
@@ -225,6 +246,13 @@ namespace CsOpdrachten
 
             act = () => list[0] = 3;
             act.Should().Throw<InvalidOperationException>();
+        }
+
+        [Test]
+        public void IndexOf_throws_invalid_operation_if_list_is_null()
+        {
+            Action act = () => list.IndexOf(2);
+            act.Should().Throw < InvalidOperationException>();
         }
     }
 }
