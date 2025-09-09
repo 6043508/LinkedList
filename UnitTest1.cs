@@ -1,4 +1,5 @@
 ﻿using AwesomeAssertions;
+using System.Diagnostics;
 
 namespace CsOpdrachten
 {
@@ -254,5 +255,25 @@ namespace CsOpdrachten
             Action act = () => list.IndexOf(2);
             act.Should().Throw < InvalidOperationException>();
         }
+        
+        [Test]
+        public void Checks_if_the_enumerator_yields_the_correct_order()
+        {
+            list.Add(1);
+            list.Add(2);
+            list.Add(3);
+            list.Add(4);
+
+            list.Should().ContainInConsecutiveOrder([1, 2, 3, 4]);
+            list.Should().HaveCount(4);
+        }
+
+        [Test]
+        public void Enumerator_throws_exception_when_empty()  //ok???
+        {
+            Action act = () => list.Should().BeNullOrEmpty();
+            act.Should().Throw<InvalidOperationException>();
+        }
+
     }
 }

@@ -1,7 +1,6 @@
-﻿// 1.
-// 2. Array, List
-// 3. Zodat je elementen kan opzoeken
-// 4. je kan elk type lijst maken die je maar wilt
+﻿// 1. add, remove, clear
+using System;
+using System.Collections;
 
 namespace CsOpdrachten
 {
@@ -203,6 +202,25 @@ namespace CsOpdrachten
 
         public int Count() => //O(1)
             _count;
+
+        //can use foreach now 
+        public IEnumerator<T> GetEnumerator()
+        {
+            if (_head is null)
+                throw new InvalidOperationException("List is empty");
+
+            Node? current = _head;
+            while (current is not null)
+            {
+                yield return current.Value;
+                current = current.Next;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }
 
