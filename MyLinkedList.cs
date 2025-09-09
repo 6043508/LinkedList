@@ -1,4 +1,6 @@
-﻿// 1. add, remove, clear
+﻿// 1. ToString, GetType?
+// 2. Ja, want ze gebruiken allemaal de IEnumerable<T> interface
+
 using System;
 using System.Collections;
 
