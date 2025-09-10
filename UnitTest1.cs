@@ -275,5 +275,20 @@ namespace CsOpdrachten
             act.Should().Throw<InvalidOperationException>();
         }
 
+        [Test]
+        public void Checks_the_output_of_foreach()
+        {
+            list.Add(1);
+            list.Add(2);
+            list.Add(3);
+            list.Add(4);
+
+            List<int> newList = [] ;
+
+            foreach (var i in list)
+                newList.Add(i);
+
+            newList.Should().ContainInOrder(1, 2, 3, 4);
+        }
     }
 }
