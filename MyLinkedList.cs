@@ -207,10 +207,7 @@ namespace CsOpdrachten
 
         //can use foreach now 
         public IEnumerator<T> GetEnumerator()
-        {
-            if (_head is null)
-                throw new InvalidOperationException("List is empty");
-
+        { 
             Node? current = _head;
             while (current is not null)
             {

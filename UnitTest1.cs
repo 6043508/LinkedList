@@ -257,22 +257,30 @@ namespace CsOpdrachten
         }
         
         [Test]
-        public void Checks_if_the_enumerator_yields_the_correct_order()
+        public void Checks_the_enumerator_output()
         {
+            var enumerator = list.GetEnumerator();
             list.Add(1);
             list.Add(2);
             list.Add(3);
             list.Add(4);
 
-            list.Should().ContainInConsecutiveOrder([1, 2, 3, 4]);
-            list.Should().HaveCount(4);
+            enumerator.MoveNext();
+            enumerator.Current.Should().Be(1);
+            enumerator.MoveNext();
+            enumerator.Current.Should().Be(2);
+            enumerator.MoveNext();
+            enumerator.Current.Should().Be(3);
+            enumerator.MoveNext().Should().BeTrue();
+            enumerator.Current.Should().Be(4);
+            enumerator.MoveNext().Should().BeFalse();
         }
 
         [Test]
-        public void Enumerator_throws_exception_when_empty()  //ok???
+        public void Enumerator_move_next_should_be_false_when_list_is_empty() 
         {
-            Action act = () => list.Should().BeNullOrEmpty();
-            act.Should().Throw<InvalidOperationException>();
+            var enumerator = list.GetEnumerator();
+            enumerator.MoveNext().Should().BeFalse();
         }
 
         [Test]
