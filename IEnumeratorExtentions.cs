@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CsOpdrachten
 {
-    public static class Extensions
+    public static class IEnumeratorExtentions
     {
         public static IEnumerable<TResult> MySelect<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector)
         {
@@ -148,6 +148,7 @@ namespace CsOpdrachten
 
             return value;
         }
+
     }
 }
 
