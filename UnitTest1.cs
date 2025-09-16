@@ -311,7 +311,7 @@ namespace CsOpdrachten
         #region Extensions
 
         [Test]
-        public void Where_should_return_an_IEnumerable_with_elements_that_are_true()
+        public void Where_should_return_an_IEnumerable_with_elements_that_match_the_predicate()
         {
             list.Add(1);
             list.Add(2);
@@ -391,6 +391,67 @@ namespace CsOpdrachten
         }
 
         [Test]
+        public void MyWhere_with_null_source_should_throw_exception_when_trying_to_enumerate_it_with_index()
+        {
+            List<int>? nums = null;
+
+            Action act = () => nums!.MyWhere((n, index) => n <= index * 10).ToList();
+            act.Should().Throw<ArgumentNullException>();
+
+        }
+
+        [Test]
+        public void MyWhere_with_null_predicate_should_throw_exception_when_trying_to_enumerate_with_index()
+        {
+            Func<int,int, bool>? predicate = null;
+            Action act = () => list.MyWhere(predicate!).ToList();
+            act.Should().Throw<ArgumentNullException>();
+        }
+
+        [Test]
+        public void MyWhere_should_return_the_values_where_index_and_element_both_match_predicate()
+        {
+            list = [1, 2, 31, 4, 60];
+            List<int> newList = list.MyWhere((n, index) => n <= index * 10).ToList();
+            newList.Should().ContainInOrder(2, 4);
+        }
+
+        [Test]
+        public void MyWhere_with_index_enumerator_should_enumerate_properly()
+        {
+            list = [1, 2, 31, 4];
+            List<int> newList = list.MyWhere((n, index) => n <= index * 10).ToList();
+            var enumerator = newList.GetEnumerator();
+
+            enumerator.MoveNext();
+            enumerator.Current.Should().Be(2);
+
+            enumerator.MoveNext();
+            enumerator.Current.Should().Be(4);
+
+            enumerator.MoveNext().Should().BeFalse();
+        }
+
+        [Test]
+        public void MyWhere_with_index_should_return_empty_if_source_is_empty()
+        {
+            List<int> newList = list.MyWhere((n, index) => true).ToList();
+            newList.Should().BeEmpty();
+        }
+
+        [Test]
+        public void MyWhere_with_index_should_return_empty_if_nothing_matches_the_predicate()
+        {
+            list.Add(1);
+            list.Add(3);
+            list.Add(5);
+
+            var empty = list.MyWhere((x, index) => false).ToList();
+
+            empty.Should().BeEmpty();
+        }
+
+        [Test]
         public void MySelect_source_if_null_should_throw_exception_when_enumerating()
         {
             List<int>? nums = null;
@@ -407,9 +468,41 @@ namespace CsOpdrachten
         }
 
         [Test]
+        public void MySelect_source_if_null_should_throw_exception_when_enumerating_with_index()
+        {
+            List<int>? nums = null;
+           
+            Action act = () => nums!.MySelect((n, index) => new { index, n }).ToList();
+            act.Should().Throw<ArgumentNullException>();
+        }
+
+        [Test]
+        public void MySelect_selector_if_null_should_throw_exception_when_enumerating_with_index()
+        {
+            Func<int, int, int>? no = null;
+            Action act = () => list.MySelect(no!).ToList();
+            act.Should().Throw<ArgumentNullException>();
+        }
+
+        [Test]
+        public void MySelect_should_return_selection_with_index()
+        {
+            list = [2, 3, 4];
+            var newList = list.MySelect((n, index) => n += index).ToList();
+            newList.Should().ContainInOrder(2, 4, 6);
+        }
+
+        [Test]
         public void MySelect_should_return_empty_if_list_is_empty()
         {
             list.MySelect(n => n.ToString());
+            list.Should().BeEmpty();
+        }
+
+        [Test]
+        public void MySelect_with_index_should_return_empty_if_list_is_empty()
+        {
+            list.MySelect((n, Index) => true);
             list.Should().BeEmpty();
         }
 
@@ -435,8 +528,6 @@ namespace CsOpdrachten
             var toString = list.MySelect(n => n.ToString()).ToList();
             var enumerator = toString.GetEnumerator();
 
-            enumerator.Current.Should().Be(null);
-
             enumerator.MoveNext();
             enumerator.Current.Should().Be("1");
 
@@ -448,6 +539,31 @@ namespace CsOpdrachten
 
             enumerator.MoveNext().Should().BeFalse();
             toString.Count.Should().Be(3);
+        }
+
+        [Test]
+        public void MySelect_with_index_enumerator_should_enumerate_properly()
+        {
+            list.Add(1);
+            list.Add(3);
+            list.Add(6);
+
+            var toList = list.MySelect((n, index) => new {index, n}).ToList();
+            var enumerator = toList.GetEnumerator();
+
+            enumerator.MoveNext();
+            enumerator.Current.index.Should().Be(0);
+            enumerator.Current.n.Should().Be(1);
+
+            enumerator.MoveNext();
+            enumerator.Current.index.Should().Be(1);
+            enumerator.Current.n.Should().Be(3);
+
+            enumerator.MoveNext();
+            enumerator.Current.index.Should().Be(2);
+            enumerator.Current.n.Should().Be(6);
+
+            enumerator.MoveNext().Should().BeFalse();
         }
 
 
@@ -644,10 +760,29 @@ namespace CsOpdrachten
         }
 
         [Test]
+        public void MyFirstOrDefault_with_custom_default_and_predicate_should_throw_exception_if_predicate_is_null()
+        {
+            Func<int, bool>? isnull = null!;
+            Action act = () => list.MyFirstOrDefault(isnull, 5);
+            act.Should().Throw<ArgumentNullException>();
+        }
+
+        [Test]
         public void MyFirstOrDefault_with__predicate_should_throw_exception_if_source_is_null()
         {
             List<int>? nolist = null;
             Action act = () => nolist!.MyFirstOrDefault(n => n < 0);
+            act.Should().Throw<ArgumentNullException>();
+        }
+
+        [Test]
+        public void MyFirstOrDefault_with_predicate_should_throw_exception_if_predicate_is_null()
+        {
+            list.Add(1);
+
+            Func<int, bool>? isnull = null!;
+            Action act = () => list.MyFirstOrDefault(isnull);
+
             act.Should().Throw<ArgumentNullException>();
         }
 

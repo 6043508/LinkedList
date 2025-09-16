@@ -17,6 +17,19 @@ namespace CsOpdrachten
                 yield return selector(i);
         }
 
+        public static IEnumerable<TResult> MySelect<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, Int32, TResult> selector)
+        {
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(selector);
+
+            int index = 0;
+            foreach (var i in source)
+            {
+                yield return selector(i, index);
+                index++;
+            }
+        }
+
         public static IEnumerable<TSource> MyWhere<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
         {
             ArgumentNullException.ThrowIfNull(source);
@@ -26,6 +39,22 @@ namespace CsOpdrachten
             {
                 if (predicate(i))
                     yield return i;
+            }
+        }
+
+        public static IEnumerable<TSource> MyWhere<TSource>(this IEnumerable<TSource> source, Func<TSource, Int32, bool> predicate)
+        {
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(predicate);
+
+            int index = 0;
+            foreach (var i in source)
+            {
+                if (predicate(i, index))
+                {
+                    yield return i;
+                }
+                index++;
             }
         }
 
@@ -40,9 +69,7 @@ namespace CsOpdrachten
             foreach (var i in source)
             {
                 if (predicate(i))
-                {
                     count++;
-                }
             }
             return count;
         }
@@ -65,10 +92,9 @@ namespace CsOpdrachten
             ArgumentNullException.ThrowIfNull(predicate);
 
             foreach (var i in source)
-            {
                 if (predicate(i))
                     return true;
-            }
+            
             return false;
         }
 
@@ -102,6 +128,7 @@ namespace CsOpdrachten
         public static TSource? MyFirstOrDefault<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
         {
             ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(predicate);
 
             foreach (var i in source)
                 if (predicate(i))
@@ -113,6 +140,7 @@ namespace CsOpdrachten
         public static TSource? MyFirstOrDefault<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate, TSource value)
         {
             ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(predicate);
 
             foreach (var i in source)
                 if (predicate(i))
