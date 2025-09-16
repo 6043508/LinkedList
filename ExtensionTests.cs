@@ -1,11 +1,12 @@
 ﻿using AwesomeAssertions;
 using AwesomeAssertions.Specialized;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace CsOpdrachten
 {
-    public class Tests
+    public class ExtensionTests
     {
         MyLinkedList<int> list;
 
@@ -14,301 +15,6 @@ namespace CsOpdrachten
         {
             list = new MyLinkedList<int>();
         }
-
-        #region Opracht1
-
-        [Test]
-        public void Adding_an_element_will_add_it_to_the_end_of_list()
-        {
-            list.Add(1);
-            list.Add(2);
-            list[0].Should().Be(1);
-            list[1].Should().Be(2);
-        }
-
-        [Test]
-        public void Setting_an_element_will_change_the_value_at_specified_index()
-        {
-            list.Add(1);
-            list.Add(2);
-            list.Add(3);
-            list.Add(5);
-
-            list[3] = 4;
-
-            list[3].Should().Be(4);
-        }
-
-        [Test]
-        public void Removing_element_should_remove_it_and_the_list_should_resize()
-        {
-            list.Add(1);
-            list.Add(3);
-            list.Add(2);
-            list.Add(3);
-
-            list.Remove(3);
-
-            list[0].Should().Be(1);
-            list[1].Should().Be(2);
-            list.Count().Should().Be(3);
-        }
-
-        [Test]
-        public void Removing_the_first_element_should_only_remove_one_number()
-        {
-            list.Add(2);
-            list.Add(1);
-            list.Add(3);
-            list.Add(2);
-
-            list.Remove(2);
-
-            list[0].Should().Be(1);
-            list[1].Should().Be(3);
-            list[2].Should().Be(2);
-            list.Count().Should().Be(3);
-        }
-
-        [Test]
-        public void Clearing_the_list_should_emtpy_the_list()
-        {
-            list.Add(2);
-            list.Add(1);
-            list.Add(3);
-
-            list.Clear();
-
-            list.Count().Should().Be(0);
-        }
-
-        [Test]
-        public void Removing_an_element_at_index_should_remove_it_and_resize_the_list()
-        {
-            list.Add(2);
-            list.Add(1);
-            list.Add(3);
-            list.Add(2);
-
-            list.RemoveAt(2);
-
-            list[0].Should().Be(2);
-            list[1].Should().Be(1);
-            list[2].Should().Be(2);
-            list.Count().Should().Be(3);
-        }
-
-        [Test]
-        public void Removing_the_first_index_with_RemoveAt_should_work_properly()
-        {
-            list.Add(1);
-            list.Add(2);
-            list.Add(3);
-
-            list.RemoveAt(0);
-
-            list[0].Should().Be(2);
-            list[1].Should().Be(3);
-            list.Count().Should().Be(2);
-        }
-
-        [Test]
-        public void RemoveAt_should_throw_an_exception_if_list_is_null()
-        {
-            Action act = () => list.RemoveAt(3);
-            act.Should().Throw<InvalidOperationException>();
-        }
-
-        [Test]
-        public void Remove_should_throw_an_exception_if_list_is_null()
-        {
-            Action act = () => list.Remove(3);
-            act.Should().Throw<InvalidOperationException>();
-        }
-
-        [Test]
-        public void Removing_the_last_element_should_not_cause_problems_either()
-        {
-            list.Add(1);
-            list.Add(2);
-            list.Add(3);
-
-            list.RemoveAt(2);
-
-            list[0].Should().Be(1);
-            list[1].Should().Be(2);
-
-            Action act = () => { var _ = list[2]; };
-            act.Should().Throw<NullReferenceException>();
-        }
-
-        [Test]
-        public void Inserting_an_element_at_the_front_should_add_it_to_the_front()
-        {
-            list.Add(2);
-            list.Add(3);
-
-            list.Insert(0, 1);
-
-            list[0].Should().Be(1);
-            list[1].Should().Be(2);
-            list.Count().Should().Be(3);
-        }
-
-        [Test]
-        public void Inserting_an_element_in_the_center_should_add_it()
-        {
-            list.Add(1);
-            list.Add(3);
-            list.Add(4);
-
-            list.Insert(1, 2);
-
-            list[0].Should().Be(1);
-            list[1].Should().Be(2);
-            list[2].Should().Be(3);
-            list.Count().Should().Be(4);
-        }
-
-        [Test]
-        public void Inserting_an_element_in_the_last_position_should_insert_it_between_the_last_and_one_before_last()
-        {
-            list.Add(1);
-            list.Add(3);
-
-            list.Insert(1, 2);
-
-            list[0].Should().Be(1);
-            list[1].Should().Be(2);
-            list[2].Should().Be(3);
-        }
-
-        [Test]
-        public void Insert_should_throw_InvalidOperationException_if_argument_goes_out_of_range()
-        {
-            list.Add(1);
-            list.Add(3);
-
-            Action act = () => list.Insert(-1, 3);
-            act.Should().Throw<InvalidOperationException>();
-
-            act = () => list.Insert(4, 3);
-            act.Should().Throw<InvalidOperationException>();
-        }
-
-        [Test]
-        public void Insert_should_throw_an_invalidOperationException_if_list_is_null()
-        {
-            Action act = () => list.Insert(3, 3);
-            act.Should().Throw<InvalidOperationException>();
-        }
-
-        [Test]
-        public void Contains_should_return_true_if_element_is_in_list()
-        {
-            list.Add(1);
-            list.Contains(1).Should().BeTrue();
-        }
-
-        [Test]
-        public void Contains_should_return_false_if_element_is_not_in_list()
-        {
-            list.Add(1);
-            list.Contains(2).Should().BeFalse();
-        }
-
-        [Test]
-        public void Contains_should_throw_InvalidOperation_if_list_is_empty()
-        {
-            Action act = () => list.Contains(1);
-            act.Should().Throw<InvalidOperationException>();
-        }
-
-        [Test]
-        public void IndexOf_should_return_the_index_of_element_in_list()
-        {
-            list.Add(1);
-            list.Add(3);
-            list.Add(4);
-
-            list.IndexOf(1).Should().Be(0);
-            list.IndexOf(4).Should().Be(2);
-            list.IndexOf(3).Should().Be(1);
-        }
-
-        [Test]
-        public void IndexOf_should_return_minus_one_if_the_element_is_not_in_list()
-        {
-            list.Add(1);
-            list.IndexOf(2).Should().Be(-1);
-        }
-
-        [Test]
-        public void Trying_to_acces_or_set_an_element_from_an_empty_list_should_throw_InvalidOperationExceptione()
-        {
-            Action act = () => { var _ = list[0]; };
-            act.Should().Throw<InvalidOperationException>();
-
-            act = () => list[0] = 3;
-            act.Should().Throw<InvalidOperationException>();
-        }
-
-        [Test]
-        public void IndexOf_throws_invalid_operation_if_list_is_null()
-        {
-            Action act = () => list.IndexOf(2);
-            act.Should().Throw<InvalidOperationException>();
-        }
-        #endregion
-
-        #region Enumerator
-
-        [Test]
-        public void Checks_the_enumerator_output()
-        {
-            var enumerator = list.GetEnumerator();
-            list.Add(1);
-            list.Add(2);
-            list.Add(3);
-            list.Add(4);
-
-            enumerator.MoveNext();
-            enumerator.Current.Should().Be(1);
-            enumerator.MoveNext();
-            enumerator.Current.Should().Be(2);
-            enumerator.MoveNext();
-            enumerator.Current.Should().Be(3);
-            enumerator.MoveNext().Should().BeTrue();
-            enumerator.Current.Should().Be(4);
-            enumerator.MoveNext().Should().BeFalse();
-        }
-
-        [Test]
-        public void Enumerator_move_next_should_be_false_when_list_is_empty()
-        {
-            var enumerator = list.GetEnumerator();
-            enumerator.MoveNext().Should().BeFalse();
-        }
-
-        [Test]
-        public void Checks_the_output_of_foreach()
-        {
-            list.Add(1);
-            list.Add(2);
-            list.Add(3);
-            list.Add(4);
-
-            List<int> newList = [];
-
-            foreach (var i in list)
-                newList.Add(i);
-
-            newList.Should().ContainInOrder(1, 2, 3, 4);
-        }
-        #endregion
-
-
-        #region Extensions
 
         [Test]
         public void Where_should_return_an_IEnumerable_with_elements_that_match_the_predicate()
@@ -403,7 +109,7 @@ namespace CsOpdrachten
         [Test]
         public void MyWhere_with_null_predicate_should_throw_exception_when_trying_to_enumerate_with_index()
         {
-            Func<int,int, bool>? predicate = null;
+            Func<int, int, bool>? predicate = null;
             Action act = () => list.MyWhere(predicate!).ToList();
             act.Should().Throw<ArgumentNullException>();
         }
@@ -471,7 +177,7 @@ namespace CsOpdrachten
         public void MySelect_source_if_null_should_throw_exception_when_enumerating_with_index()
         {
             List<int>? nums = null;
-           
+
             Action act = () => nums!.MySelect((n, index) => new { index, n }).ToList();
             act.Should().Throw<ArgumentNullException>();
         }
@@ -548,7 +254,7 @@ namespace CsOpdrachten
             list.Add(3);
             list.Add(6);
 
-            var toList = list.MySelect((n, index) => new {index, n}).ToList();
+            var toList = list.MySelect((n, index) => new { index, n }).ToList();
             var enumerator = toList.GetEnumerator();
 
             enumerator.MoveNext();
@@ -673,7 +379,6 @@ namespace CsOpdrachten
             containsNegative.Should().BeFalse();
         }
 
-        #endregion
 
         [Test]
         public void MyAny_enumerator()
@@ -731,7 +436,7 @@ namespace CsOpdrachten
         [Test]
         public void MyFirstOrDefault_should_return_default_if_source_is_empty()
         {
-      
+
             int value = list.MyFirstOrDefault();
             value.Should().Be(default);
         }
@@ -849,8 +554,8 @@ namespace CsOpdrachten
         {
             list.Add(1);
             list.Add(2);
- 
-            int first = list.MyFirstOrDefault( n => n % 2 == 0);
+
+            int first = list.MyFirstOrDefault(n => n % 2 == 0);
             first.Should().Be(2);
         }
 
@@ -859,8 +564,8 @@ namespace CsOpdrachten
         {
             list.Add(1);
             list.Add(2);
- 
-            int first = list.MyFirstOrDefault( n => n < 0);
+
+            int first = list.MyFirstOrDefault(n => n < 0);
             first.Should().Be(0);
         }
 
@@ -869,14 +574,14 @@ namespace CsOpdrachten
         {
             list.Add(1);
             list.Add(2);
- 
-            int first = list.MyFirstOrDefault( n => n < 0, 4);
+
+            int first = list.MyFirstOrDefault(n => n < 0, 4);
             first.Should().Be(4);
         }
         [Test]
         public void MyFirstOrDefault_should_return_the_default_custom_value_if_the_source_is_empty_with_predicate()
         {
-            int first = list.MyFirstOrDefault( n => n < 0, 4);
+            int first = list.MyFirstOrDefault(n => n < 0, 4);
             first.Should().Be(4);
         }
 
@@ -886,8 +591,8 @@ namespace CsOpdrachten
             list.Add(1);
             list.Add(2);
             list.Add(-2);
- 
-            int first = list.MyFirstOrDefault( n => n < 0, 4);
+
+            int first = list.MyFirstOrDefault(n => n < 0, 4);
             first.Should().Be(-2);
         }
     }
